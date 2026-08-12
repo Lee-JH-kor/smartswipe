@@ -45,7 +45,7 @@
   #app{
     width:100%;
     max-width:460px;
-    min-height:100vh;
+    min-height:80vh;
     display:flex;
     flex-direction:column;
     padding:18px 16px 24px;
@@ -62,7 +62,7 @@
     30%,50%,70%{transform:translateX(-5px);}
     40%,60%{transform:translateX(5px);}
   }
-  .screen{display:none; flex-direction:column; flex:1; min-height: calc(100vh - 42px); animation: fadeIn .4s ease; position:relative;}
+  .screen{display:none; flex-direction:column; flex:1; min-height: calc(80vh - 42px); animation: fadeIn .4s ease; position:relative;}
   .screen.active{display:flex;}
   @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
 
@@ -825,6 +825,8 @@ function startGame(){
   locked = false;
   sessionStartTime = Date.now();
   scoreSubmittedThisSession = false;
+  currentSessionKey = 'session-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+  logSessionStart();
 
   buildPinboard();
   updateGauge();
@@ -997,7 +999,6 @@ function endGame(collapsed){
     collapsed: collapsed,
     perRound: perRound
   };
-  currentSessionKey = 'session-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
   autoLogSession();
 
   showScreen('screen-verdict');
@@ -1106,6 +1107,7 @@ function spawnConfetti(good){
 function buildRecord(name){
   return {
     name: name,
+    status: 'completed',
     startedAt: lastSessionStats.startedAt,
     submittedAt: new Date().toISOString(),
     playSeconds: lastSessionStats.playSeconds,
@@ -1128,9 +1130,25 @@ async function postRecord(key, record){
   return res.json();
 }
 
-/* Every finished session is logged automatically as an access record,
-   with the name defaulted to N/A. If the player later submits their
-   name, the same record is updated in place (same key). */
+/* Logged the moment a play session begins. If the player closes the tab
+   before reaching an ending, this record is never overwritten and shows
+   up in the dashboard as a mid-game dropout ("중도이탈"). */
+async function logSessionStart(){
+  if(!currentSessionKey) return;
+  try{
+    await postRecord(currentSessionKey, {
+      name: null,
+      status: 'in_progress',
+      startedAt: new Date(sessionStartTime).toISOString(),
+      submittedAt: new Date().toISOString()
+    });
+  } catch(e){
+    console.error('session start log error:', e);
+  }
+}
+
+/* Every finished session (reached an ending) overwrites the in-progress
+   record with the full result, marking it as completed. */
 async function autoLogSession(){
   if(!lastSessionStats || !currentSessionKey) return;
   try{
@@ -1264,17 +1282,28 @@ function renderAdmin(rows){
 function renderQuestionSummary(rows){
   const el = document.getElementById('adminSummary');
   if(!rows || rows.length === 0){ el.innerHTML = ''; return; }
+
+  const completedRows = rows.filter(r => r.status === 'completed');
+  const dropoutCount = rows.length - completedRows.length;
+
   const totals = {};
   const corrects = {};
   ROUNDS.forEach(r => { totals[r.id] = 0; corrects[r.id] = 0; });
-  rows.forEach(r=>{
+  completedRows.forEach(r=>{
     (r.perRound || []).forEach(pr=>{
       if(totals[pr.id] == null) return;
       totals[pr.id]++;
       if(pr.correct) corrects[pr.id]++;
     });
   });
-  let html = '<div class="q-summary">';
+
+  let html = '<div class="q-summary" style="grid-template-columns:repeat(3,1fr); margin-bottom:10px;">'
+    + '<div class="q-summary-item"><div class="qlabel">총 접속</div><div class="qpct">' + rows.length + '</div></div>'
+    + '<div class="q-summary-item"><div class="qlabel">완료</div><div class="qpct">' + completedRows.length + '</div></div>'
+    + '<div class="q-summary-item"><div class="qlabel">중도이탈</div><div class="qpct">' + dropoutCount + '</div></div>'
+    + '</div>';
+
+  html += '<div class="q-summary">';
   for(let id = 1; id <= 10; id++){
     const t = totals[id] || 0;
     const c = corrects[id] || 0;
@@ -1296,13 +1325,14 @@ function renderAdminTable(rows){
   for(let id = 1; id <= 10; id++){ html += '<th>Q' + id + '</th>'; }
   html += '</tr></thead><tbody>';
   rows.forEach(r=>{
+    const isDropout = r.status !== 'completed';
     const perRoundMap = {};
     (r.perRound || []).forEach(pr => { perRoundMap[pr.id] = pr.correct; });
     html += '<tr>'
       + '<td>' + formatDateTime(r.startedAt) + '</td>'
       + '<td>' + formatDuration(r.playSeconds) + '</td>'
-      + '<td>' + escapeHtml(r.grade || '-') + '</td>'
-      + '<td>' + (r.totalCorrect != null ? r.totalCorrect + '/' + r.totalPlayed : '-') + '</td>'
+      + '<td>' + (isDropout ? '중도이탈' : escapeHtml(r.grade || '-')) + '</td>'
+      + '<td>' + (isDropout ? '-' : (r.totalCorrect != null ? r.totalCorrect + '/' + r.totalPlayed : '-')) + '</td>'
       + '<td>' + escapeHtml(r.name || 'N/A') + '</td>';
     for(let id = 1; id <= 10; id++){
       const v = perRoundMap[id];
@@ -1330,14 +1360,15 @@ function exportAdminCSV(){
   for(let id = 1; id <= 10; id++){ header.push('Q' + id); }
   const lines = [header.join(',')];
   adminRowsCache.forEach(r=>{
+    const isDropout = r.status !== 'completed';
     const perRoundMap = {};
     (r.perRound || []).forEach(pr => { perRoundMap[pr.id] = pr.correct; });
     const row = [
       formatDateTime(r.startedAt),
       r.playSeconds,
-      r.grade || '',
-      r.totalCorrect,
-      r.totalPlayed,
+      isDropout ? '중도이탈' : (r.grade || ''),
+      isDropout ? '' : r.totalCorrect,
+      isDropout ? '' : r.totalPlayed,
       '"' + String(r.name || 'N/A').replace(/"/g, '""') + '"'
     ];
     for(let id = 1; id <= 10; id++){
