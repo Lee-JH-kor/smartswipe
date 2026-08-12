@@ -529,7 +529,7 @@
     </div>
     <div class="pinboard" id="pinboard"></div>
     <div class="gauge-wrap">
-      <div class="gauge-label"><span>판단 신뢰도</span><span id="gaugeNum">50</span></div>
+      <div class="gauge-label"><span>신뢰도</span><span id="gaugeNum">50</span></div>
       <div class="gauge-bar">
         <div class="gauge-fill" id="gaugeFill"></div>
         <div class="gauge-flash" id="gaugeFlash"></div>
@@ -1039,7 +1039,7 @@ function endGame(collapsed){
   verdictTimers.push(setTimeout(()=>{ vLine1.classList.add('show'); sfxDrumroll(); }, 100));
 
   verdictTimers.push(setTimeout(()=>{
-    vLine2.textContent = '적합도 분석 중...';
+    vLine2.textContent = '정답 여부 분석 중...';
     vLine2.classList.add('show');
   }, 700));
 
