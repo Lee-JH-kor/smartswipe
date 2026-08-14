@@ -45,7 +45,7 @@
   #app{
     width:100%;
     max-width:460px;
-    min-height:80vh;
+    min-height:64vh;
     display:flex;
     flex-direction:column;
     padding:18px 16px 24px;
@@ -62,7 +62,7 @@
     30%,50%,70%{transform:translateX(-5px);}
     40%,60%{transform:translateX(5px);}
   }
-  .screen{display:none; flex-direction:column; flex:1; min-height: calc(80vh - 42px); animation: fadeIn .4s ease; position:relative;}
+  .screen{display:none; flex-direction:column; flex:1; min-height: calc(64vh - 42px); animation: fadeIn .4s ease; position:relative;}
   .screen.active{display:flex;}
   @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
 
@@ -171,30 +171,23 @@
 
   .card-stage{
     position:relative;
-    flex:1;
+    flex:0 0 auto;
     display:flex;
     align-items:center;
     justify-content:center;
-    min-height:340px;
-    margin-bottom: 14px;
+    min-height:270px;
+    margin-bottom: 8px;
   }
-  .swipe-hint{
-    position:absolute; top:46%; transform:translateY(-50%);
-    font-family:var(--font-display); font-size:13px; letter-spacing:.06em;
-    color: rgba(42,35,26,0.3); z-index:0; text-align:center;
-  }
-  .swipe-hint.left{ left:-2px; }
-  .swipe-hint.right{ right:-2px; }
 
   .card{
     position:relative;
     width:100%;
-    max-width:320px;
-    min-height:360px;
+    max-width:270px;
+    min-height:300px;
     background: var(--paper);
     border-radius:4px;
     box-shadow: 0 18px 30px var(--paper-shadow), 0 2px 0 rgba(0,0,0,0.2);
-    padding: 30px 22px 26px;
+    padding: 22px 18px 18px;
     touch-action: none;
     user-select:none;
     cursor:grab;
@@ -218,7 +211,7 @@
     aspect-ratio: 3 / 4;
     border-radius:8px;
     overflow:hidden;
-    margin-bottom:14px;
+    margin-bottom:10px;
     box-shadow: 0 10px 18px rgba(0,0,0,0.4);
     border: 2px solid rgba(42,35,26,0.25);
     background: #d8c9a0;
@@ -303,10 +296,12 @@
 
   .decision-buttons{ display:flex; gap:12px; }
   .btn{
-    flex:1; padding:15px 10px; border-radius:5px; font-size:16px; letter-spacing:.05em;
+    flex:1; padding:16px 10px; border-radius:8px; font-size:17px; letter-spacing:.05em;
+    display:flex; align-items:center; justify-content:center; gap:8px;
     transition: transform .12s ease;
   }
   .btn:active{ transform: scale(0.96); }
+  .btn-arrow-icon{ width:20px; height:20px; flex-shrink:0; }
   .btn-suspect{ background: var(--stamp-red); color:#fff; border:none; box-shadow: 0 3px 0 rgba(120,40,30,0.4); }
   .btn-trust{ background: var(--stamp-teal); color:#fff; border:none; box-shadow: 0 3px 0 rgba(20,80,60,0.4); }
 
@@ -529,15 +524,13 @@
     </div>
     <div class="pinboard" id="pinboard"></div>
     <div class="gauge-wrap">
-      <div class="gauge-label"><span>신뢰도</span><span id="gaugeNum">50</span></div>
+      <div class="gauge-label"><span>판단 신뢰도</span><span id="gaugeNum">50</span></div>
       <div class="gauge-bar">
         <div class="gauge-fill" id="gaugeFill"></div>
         <div class="gauge-flash" id="gaugeFlash"></div>
       </div>
     </div>
     <div class="card-stage">
-      <div class="swipe-hint left">의심<br>&larr;</div>
-      <div class="swipe-hint right">&rarr;<br>신뢰</div>
       <div class="card" id="card">
         <div class="stamp stamp-suspect" id="stampSuspect">의심</div>
         <div class="stamp stamp-trust" id="stampTrust">신뢰</div>
@@ -551,8 +544,14 @@
       </div>
     </div>
     <div class="decision-buttons">
-      <button class="btn btn-suspect" onclick="decide('suspect')">의심</button>
-      <button class="btn btn-trust" onclick="decide('trust')">신뢰</button>
+      <button class="btn btn-suspect" onclick="decide('suspect')">
+        <svg class="btn-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+        <span>의심</span>
+      </button>
+      <button class="btn btn-trust" onclick="decide('trust')">
+        <span>신뢰</span>
+        <svg class="btn-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
     </div>
   </section>
 
@@ -1039,7 +1038,7 @@ function endGame(collapsed){
   verdictTimers.push(setTimeout(()=>{ vLine1.classList.add('show'); sfxDrumroll(); }, 100));
 
   verdictTimers.push(setTimeout(()=>{
-    vLine2.textContent = '정답 여부 분석 중...';
+    vLine2.textContent = '적합도 분석 중...';
     vLine2.classList.add('show');
   }, 700));
 
