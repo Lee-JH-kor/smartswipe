@@ -306,15 +306,52 @@
   .btn-trust{ background: var(--stamp-teal); color:#fff; border:none; box-shadow: 0 3px 0 rgba(20,80,60,0.4); }
 
   /* ---------- VERDICT (dramatic ending) ---------- */
-  #screen-verdict{ justify-content:center; align-items:center; text-align:center; position:relative; }
-  .verdict-stage{ width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; }
+  #screen-verdict{ justify-content:flex-start; align-items:center; text-align:center; position:relative; padding-top:1vh; }
+  .verdict-stage{ width:100%; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; min-height:10vh; }
+  .verdict-loading{
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    z-index:5;
+    pointer-events:none;
+  }
   .verdict-line{
-    font-family: var(--font-mono); font-size:15px; letter-spacing:.2em;
-    color: rgba(42,35,26,0.75); opacity:0; transition: opacity .5s ease; margin-bottom:6px;
+    opacity:0; margin-bottom:10px;
+    transition: opacity .3s ease, height .3s ease, margin .3s ease;
+    overflow:hidden;
   }
   .verdict-line.show{ opacity:1; }
-  .verdict-line.hide{ opacity:0; }
-  .verdict-stampwrap{ margin: 10px 0 18px; }
+  .verdict-line.hide{ opacity:0; height:0; margin:0; }
+  #vLine1{
+    font-family: var(--font-display);
+    font-size:30px;
+    font-weight:700;
+    color: var(--ink);
+    letter-spacing:.05em;
+    text-shadow: 2px 2px 0 rgba(42,35,26,0.12);
+  }
+  #vLine2{
+    font-family: var(--font-mono);
+    font-size:14px;
+    font-weight:700;
+    color: var(--ink);
+    letter-spacing:.1em;
+  }
+  .loading-dots{ display:inline-flex; gap:3px; margin-left:4px; vertical-align:middle; }
+  .loading-dots span{
+    width:5px; height:5px; border-radius:50%;
+    background: var(--ink);
+    animation: loadingDotBounce 1s ease-in-out infinite;
+  }
+  .loading-dots span:nth-child(1){ animation-delay:0s; }
+  .loading-dots span:nth-child(2){ animation-delay:.15s; }
+  .loading-dots span:nth-child(3){ animation-delay:.3s; }
+  @keyframes loadingDotBounce{ 0%,80%,100%{ opacity:.25; transform:translateY(0); } 40%{ opacity:1; transform:translateY(-3px); } }
+  .verdict-stampwrap{ margin: 4px 0 18px; }
   .verdict-stamp{
     font-family: var(--font-display);
     font-size:108px;
@@ -557,9 +594,11 @@
 
   <!-- ============ VERDICT (dramatic ending) ============ -->
   <section id="screen-verdict" class="screen">
-    <div class="verdict-stage">
+    <div class="verdict-loading" id="verdictLoading">
       <div class="verdict-line" id="vLine1">탐색 종료</div>
       <div class="verdict-line" id="vLine2"></div>
+    </div>
+    <div class="verdict-stage">
       <div class="verdict-details" id="verdictDetails" style="display:none;">
         <div class="grade-card">
           <div class="verdict-stampwrap" id="verdictStampWrap" style="display:none;">
@@ -1038,7 +1077,7 @@ function endGame(collapsed){
   verdictTimers.push(setTimeout(()=>{ vLine1.classList.add('show'); sfxDrumroll(); }, 100));
 
   verdictTimers.push(setTimeout(()=>{
-    vLine2.textContent = '적합도 분석 중...';
+    vLine2.innerHTML = '적합도 분석 중<span class="loading-dots"><span></span><span></span><span></span></span>';
     vLine2.classList.add('show');
   }, 700));
 
