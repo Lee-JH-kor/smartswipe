@@ -676,17 +676,17 @@ const ROUNDS = [
   { id:4, type:"fail", img:"4.png",
     role: "프로젝트 기획팀 · 초기 세팅 전담",
     question: "중요한 업무 정보는 어떤 방식으로 전달하십니까?",
-    answer: "자료보다 직접 만나서 자세하게 전달해야만 제대로 전달된다고 생각해요.",
+    answer: "자료보다 직접 만나서 자세하게 설명해야만 제대로 전달된다고 생각해요.",
     correct: "suspect" },
   { id:5, type:"pass", img:"5.png",
     role: "캐릭터 아트팀 · 협업 조율 담당",
-    question: "지금 맡은 업무가 왜 필요한지 어떻게 확인하십니까?",
+    question: "지금 업무의 목적이 무엇인지 어떻게 확인하십니까?",
     answer: "제가 맡은 업무가 조직의 방향과 어떻게 연결되는지 리더를 통해 묻고 늘 확인하려고 해요.",
     correct: "trust" },
   { id:6, type:"fail", img:"6.png",
     role: "캐릭터 디자인팀 · 팀장급",
     question: "팀원들이 자신의 업무 의미를 잘 이해하고 있다고 보십니까?",
-    answer: "저희 팀은 다들 알아서 잘하는 편이라, 따로 짚어주지 않아도 잘 찾아가요.",
+    answer: "저희 팀은 다들 알아서 잘하는 편이라, 따로 짚어주지 않아도 잘 해요.",
     correct: "suspect" },
   { id:7, type:"pass", img:"7.png",
     role: "UX/UI팀 · 플랫폼 담당",
@@ -700,14 +700,14 @@ const ROUNDS = [
     correct: "suspect" },
   { id:9, type:"fail", img:"9.png",
     role: "브랜드 매니지먼트팀 · 팀장급",
-    question: "다른 팀에도 도움이 될 만한 자료가 있다면 어떻게 하십니까?",
-    answer: "정리해서 누구나 열어볼 수 있는 공간에 올려두고, 필요할 때 바로 찾을 수 있게 해요.",
+    question: "노하우와 정보는 어떻게 관리하고 계신가요?",
+    answer: "팀이나 조직에 제한 없이 누구나 열어볼 수 있도록 오픈소스로 관리하는 게 중요하다고 생각해요.",
     correct: "suspect" },
-  { id:10, type:"fail", img:"10.png",
+  { id:10, type:"pass", img:"10.png",
     role: "QC팀 · 팀장급",
-    question: "지금 진행 중인 업무가 회사 방향과 어떻게 연결되는지 아십니까?",
-    answer: "위에서 정해준 대로 처리하는 게 제 역할이라, 굳이 연결점까지 생각하진 않아요.",
-    correct: "suspect" },
+    question: "나의 업무와 회사 방향과 연결하기 위해 어떤 노력을 해야 할까요?",
+    answer: "상위 리더와 수시로 소통하면서 담당 업무가 전체 방향에서 벗어나지 않도록 챙기고 있어요.",
+    correct: "trust" },
 ];
 
 
@@ -989,7 +989,7 @@ function calcGrade(spiesCaught, spiesTotal, realProtected, realTotal, collapsed)
       desc: '다시 한 번 일하는 방식을 확인해보시면 어떨까요?' };
   }
   if(spiesCaught === spiesTotal && realProtected === realTotal){
-    return { tier:'S', color:'var(--ink)', title:'가치 헌터',
+    return { tier:'S', color:'var(--ink)', title:'Value Master',
       desc: '일하는 방식에 적합한 인재를 모두 찾았습니다!' };
   }
   if(totalCaughtRight >= totalPlayed - 1){
