@@ -108,9 +108,62 @@
   .btn-primary:active{ transform: translateY(4px); box-shadow:0 0px 0 var(--ink); }
 
   /* ---------- INTRO ---------- */
-  #screen-intro{ justify-content:flex-start; align-items:center; text-align:center; padding-top:14vh; }
+  #screen-intro{ justify-content:flex-start; align-items:center; text-align:center; padding-top:8vh; }
   .intro-center{ display:flex; flex-direction:column; align-items:center; gap:10px; }
   .intro-center .eyebrow{ font-size:13px; letter-spacing:.22em; color: var(--ink-soft); }
+  .intro-howto{
+    margin-top:22px;
+    width:100%;
+    background: var(--paper);
+    border-radius:10px;
+    padding:18px 18px 16px;
+    box-shadow: 0 10px 22px rgba(150,105,40,0.18);
+    border: 1px solid rgba(42,35,26,0.08);
+    text-align:left;
+  }
+  .intro-howto-lead{
+    font-family: var(--font-body);
+    font-weight:700;
+    font-size:14.5px;
+    color: var(--ink);
+    text-align:center;
+    margin: 0 0 14px;
+    padding-bottom:12px;
+    border-bottom: 1px dashed rgba(42,35,26,0.2);
+  }
+  .intro-step{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    margin-bottom:12px;
+  }
+  .intro-step-num{
+    flex-shrink:0;
+    font-family: var(--font-mono);
+    font-size:11px;
+    font-weight:700;
+    color: var(--paper);
+    background: var(--ink);
+    padding:3px 7px;
+    border-radius:3px;
+    letter-spacing:.05em;
+    margin-top:1px;
+  }
+  .intro-step-text{
+    font-family: var(--font-body);
+    font-size:13.5px;
+    line-height:1.6;
+    color: var(--ink);
+  }
+  .intro-howto-cta{
+    font-family: var(--font-mono);
+    font-size:12px;
+    font-weight:700;
+    color: var(--stamp-teal);
+    text-align:center;
+    margin: 10px 0 0;
+    letter-spacing:.03em;
+  }
 
   /* ---------- GAME ---------- */
   .game-header{
@@ -546,8 +599,20 @@
     <div class="intro-center">
       <div class="eyebrow">SMART SWIPE</div>
       <h1 class="case-title">최고의 인재를<br><span class="title-accent">찾아라!</span></h1>
+      <div class="intro-howto">
+        <p class="intro-howto-lead">일하는 방식을 올바르게 실천하는 인재를 찾아주세요.</p>
+        <div class="intro-step">
+          <span class="intro-step-num">Step 1</span>
+          <span class="intro-step-text">질문과 캐릭터의 답변을 읽고, 일하는 방식에 적합한 답변인지 판별합니다.</span>
+        </div>
+        <div class="intro-step">
+          <span class="intro-step-num">Step 2</span>
+          <span class="intro-step-text">적합 여부를 휴대폰 화면 좌우로 스와이프해 응답하거나, 버튼을 누릅니다.</span>
+        </div>
+        <p class="intro-howto-cta">아래 버튼을 눌러 시작하세요!</p>
+      </div>
     </div>
-    <div style="width:100%; margin-top:36px;">
+    <div style="width:100%; margin-top:24px;">
       <button class="btn-primary" style="width:100%;" onclick="startGame()">시작하기</button>
     </div>
     <div class="admin-link" onclick="openAdminGate()">관리자</div>
